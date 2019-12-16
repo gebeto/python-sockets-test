@@ -12,7 +12,6 @@ import asyncio
 CREDENTIALS_GET_URL = "http://localhost:8080/credentials.json"
 CLIENT_MESSAGE_SEND = "http://httpbin.org/post"
 
-KS = "KSKSKSKSKSKSKSKKS"
 POSTMAN_TOKEN = "POSTMAN_TOKEN"
 
 
@@ -34,7 +33,7 @@ def get_connection_credentials():
 		CREDENTIALS_GET_URL,
 		data={
 			"apiVersion": "asd",
-			"ks": KS,
+			"ks": "ksksksksk",
 			"identifier": "asd",
 			"type": "system",
 		},
@@ -44,7 +43,7 @@ def get_connection_credentials():
 	return credentials["result"]["url"], credentials["result"]["key"]
 
 
-async def listen_for_announcement(url, key):
+def listen_for_announcement(url, key):
 	sio = socketio.Client()
 
 	@sio.on("connect")
@@ -81,6 +80,4 @@ def send_message_to_client(message):
 
 url, key = get_connection_credentials()
 
-asyncio.get_event_loop().run_until_complete(
-	listen_for_announcement(url, key)
-)
+listen_for_announcement(url, key)
