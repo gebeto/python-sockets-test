@@ -76,7 +76,6 @@ def send_message_to_client(message):
 		},
 		headers={}
 	)
-	response = urlopen(request).read()
 	print(response)
 
 

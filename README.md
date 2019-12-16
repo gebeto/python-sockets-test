@@ -3,9 +3,9 @@
 
 ## Usage
 
-Install `python-socketio`
+Install `python-socketio` and another packages
 ```sh
-pip3 install --user python-socketio
+pip3 install --user python-socketio requests
 ```
 
 Run `client.py`:
