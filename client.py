@@ -56,7 +56,7 @@ def listen_for_announcement(url, key):
 
 	@sio.on("message")
 	def listen_message(message):
-		print(message)
+		print("[Message] >>", message)
 		send_message_to_client(message)
 
 	@sio.on("disconnect")
