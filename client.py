@@ -1,83 +1,39 @@
 #! python3
 
-from urllib.request import urlopen, Request
-from urllib.parse import urlencode
-from pprint import pprint
+import argparse
 import socketio
 import json
 
 import asyncio
 
+parser = argparse.ArgumentParser(description="client example")
+parser.add_argument('--user_id')
 
-CREDENTIALS_GET_URL = "http://localhost:8080/credentials.json"
-CLIENT_MESSAGE_SEND = "http://httpbin.org/post"
+args = parser.parse_args()
+user_id = args.user_id
 
-POSTMAN_TOKEN = "POSTMAN_TOKEN"
+sio = socketio.Client()
 
-
-def send_request(url, data=None, headers={}):
-	request = Request(
-		url,
-		method="POST",
-		data=json.dumps(data).encode() if data else None,
-		headers={
-			"Content-Type": "application/json",
-			"Postman-Token": POSTMAN_TOKEN,
-			**headers
-		},
-	)
-	return urlopen(request).read()
-
-def get_connection_credentials():
-	response = send_request(
-		CREDENTIALS_GET_URL,
-		data={
-			"apiVersion": "asd",
-			"ks": "ksksksksk",
-			"identifier": "asd",
-			"type": "system",
-		},
-		headers={}
-	)
-	credentials = json.loads(response)
-	return credentials["result"]["url"], credentials["result"]["key"]
+print(user_id)
+exit()
 
 
-def listen_for_announcement(url, key):
-	sio = socketio.Client()
+@sio.on("connect")
+def connect():
+	pass
 
-	@sio.on("connect")
-	def connect():
-		pass
+@sio.on("validated")
+def validated(message):
+	sio.emit("listen", key)
 
-	@sio.on("validated")
-	def validated(message):
-		sio.emit("listen", key)
+@sio.on("message")
+def listen_message(message):
+	print("[Message] >>", message)
 
-	@sio.on("message")
-	def listen_message(message):
-		print("[Message] >>", message)
-		send_message_to_client(message)
+@sio.on("disconnect")
+def disconnect():
+	pass
 
-	@sio.on("disconnect")
-	def disconnect():
-		pass
+sio.connect("ws://localhost:5000")
+sio.wait()
 
-	sio.connect(url)
-	sio.wait()
-
-
-def send_message_to_client(message):
-	response = send_request(
-		CLIENT_MESSAGE_SEND,
-		data={
-			"message": message,
-		},
-		headers={}
-	)
-	print(response)
-
-
-url, key = get_connection_credentials()
-
-listen_for_announcement(url, key)
